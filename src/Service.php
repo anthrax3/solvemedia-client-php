@@ -36,9 +36,7 @@ final class Service
     public function __construct($pubkey, $privkey, $hashkey = '')
     {
         if (empty($pubkey) || empty($privkey)) {
-            throw new Exception(
-                "To use solvemedia you must get an API key from <a href='" . self::ADCOPY_SIGNUP . "'>" . self::ADCOPY_SIGNUP . '</a>'
-            );
+            throw new Exception('To use solvemedia you must get an API key from ' . self::ADCOPY_SIGNUP);
         }
 
         $this->_pubkey = $pubkey;
