@@ -1,0 +1,24 @@
+{
+    "name": "dominionenterprises/solvemedia-client",
+    "description": "A library for accessing the Solve Media Api.",
+    "keywords": ["solvemedia", "captcha", "re-captcha"],
+    "authors": [
+        {
+            "name": "Chris Ryan",
+            "email": "christopher.ryan@dominionenterprises.com",
+            "role": "Developer"
+        }
+    ],
+    "license": "MIT",
+    "require": {
+        "guzzle/http": "~3.7",
+        "php": ">=5.4.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~4.0",
+        "squizlabs/php_codesniffer": "~1.5"
+    },
+    "autoload": {
+        "psr-4": { "DominionEnterprises\\SolveMedia\\": "src/" }
+    }
+}
