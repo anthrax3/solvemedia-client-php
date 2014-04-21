@@ -79,12 +79,12 @@ final class Service
      */
     public function checkAnswer($remoteip, $challenge, $response)
     {
-        if ($remoteip == null || $remoteip == '') {
+        if (empty($remoteip)) {
             throw new Exception('For security reasons, you must pass the remote ip to solvemedia');
         }
 
         //discard spam submissions
-        if ($challenge == null || strlen($challenge) == 0 || $response == null || strlen($response) == 0) {
+        if (empty($challenge) || empty($response)) {
             return new Response(false, 'incorrect-solution');
         }
 
