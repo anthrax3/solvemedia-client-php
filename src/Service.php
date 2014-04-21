@@ -8,7 +8,7 @@
  * @author Chris Ryan <christopher.ryan@dominionenterprises.com>
  */
 namespace DominionEnterprises\SolveMedia;
-use Guzzle\Http\Client;
+use Guzzle\Http\Client as GuzzleClient;
 
 final class Service
 {
@@ -96,7 +96,7 @@ final class Service
             return new Response(false, 'incorrect-solution');
         }
 
-        $client = new Client();
+        $client = new GuzzleClient();
         $httpResponse = $client->post(
             self::ADCOPY_VERIFY_SERVER,
             ['User-Agent' => 'solvemedia/PHP'],
