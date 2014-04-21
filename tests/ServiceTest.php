@@ -1,6 +1,7 @@
 <?php
 namespace DominionEnterprises\SolveMedia;
 use Guzzle\Http\Client as GuzzleClient;
+use Guzzle\Http\Message\Response as GuzzleResponse;
 
 /**
  * @coversDefaultClass \DominionEnterprises\SolveMedia\Service
@@ -138,6 +139,69 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
             ['test', ''],
             ['test', 0],
             ['test', false],
+        ];
+    }
+
+    /**
+     * @test
+     * @uses \DominionEnterprises\SolveMedia\Service::__construct
+     * @uses \DominionEnterprises\SolveMedia\Response::__construct
+     * @uses \DominionEnterprises\SolveMedia\Response::valid
+     * @uses \DominionEnterprises\SolveMedia\Response::getMessage
+     * @dataProvider checkAnswerErrorResponseData
+     * @covers ::checkAnswer
+     */
+    public function checkAnswerErrorResponse($hashKey, GuzzleResponse $guzzleResponse, $message)
+    {
+        $guzzleRequest = $this->getMockForAbstractClass('\Guzzle\Http\Message\RequestInterface');
+        $guzzleRequest->expects($this->once())->method('send')->will($this->returnValue($guzzleResponse));
+
+        $guzzleClient = $this->getMockForAbstractClass('\Guzzle\Http\ClientInterface');
+        $guzzleClient->expects($this->once())->method('post')->will($this->returnValue($guzzleRequest));
+
+        $service = new Service($guzzleClient, 'notest', 'notest', $hashKey);
+        $response = $service->checkAnswer('notest', 'foo', 'bar');
+        $this->assertFalse($response->valid());
+        $this->assertSame($message, $response->getMessage());
+    }
+
+    public function checkAnswerErrorResponseData()
+    {
+        return [
+            ['', new GuzzleResponse(400), 'Bad Request'],
+            ['', new GuzzleResponse(200, [], "false\nfailure-message"), 'failure-message'],
+            ['hashKey', new GuzzleResponse(200, [], "true\nfailure-message\nnot-the-right-hash"), 'hash-fail'],
+            ['hashKey', new GuzzleResponse(200, [], "false\nfailure-message\nnot-the-right-hash"), 'hash-fail'],
+            ['hashKey', new GuzzleResponse(200, [], "false\nfailure-message\n" . sha1('falsefoohashKey')), 'failure-message'],
+        ];
+    }
+
+    /**
+     * @test
+     * @uses \DominionEnterprises\SolveMedia\Service::__construct
+     * @uses \DominionEnterprises\SolveMedia\Response::__construct
+     * @uses \DominionEnterprises\SolveMedia\Response::valid
+     * @dataProvider checkAnswerValidResponseData
+     * @covers ::checkAnswer
+     */
+    public function checkAnswerValidResponse($hashKey, GuzzleResponse $guzzleResponse)
+    {
+        $guzzleRequest = $this->getMockForAbstractClass('\Guzzle\Http\Message\RequestInterface');
+        $guzzleRequest->expects($this->once())->method('send')->will($this->returnValue($guzzleResponse));
+
+        $guzzleClient = $this->getMockForAbstractClass('\Guzzle\Http\ClientInterface');
+        $guzzleClient->expects($this->once())->method('post')->will($this->returnValue($guzzleRequest));
+
+        $service = new Service($guzzleClient, 'notest', 'notest', $hashKey);
+        $response = $service->checkAnswer('notest', 'foo', 'bar');
+        $this->assertTrue($response->valid());
+    }
+
+    public function checkAnswerValidResponseData()
+    {
+        return [
+            ['', new GuzzleResponse(200, [], 'true')],
+            ['hashKey', new GuzzleResponse(200, [], "true\n\n" . sha1('truefoohashKey'))],
         ];
     }
 
