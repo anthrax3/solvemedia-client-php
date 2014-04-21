@@ -55,15 +55,8 @@ final class Service
      */
     public function getHtml($error = null, $useSsl = false)
     {
-        $server = self::ADCOPY_API_SERVER;
-        if ($useSsl) {
-            $server = self::ADCOPY_API_SECURE_SERVER;
-        }
-
-        $errorpart = '';
-        if ($error) {
-            $errorpart = ';error=1';
-        }
+        $server = $useSsl ? self::ADCOPY_API_SECURE_SERVER : self::ADCOPY_API_SERVER;
+        $errorpart = $error ? ';error=1' : '';
 
         return '<script type="text/javascript" src="' . $server . '/papi/challenge.script?k=' . $this->_pubkey . $errorpart . '"></script>
 
