@@ -16,8 +16,8 @@ namespace DominionEnterprises\SolveMedia;
  */
 final class Response
 {
-    private $isValid;
-    private $error;
+    private $_isValid;
+    private $_error;
 
     /**
      * Construct a new Response with a valid flag and error message.
@@ -27,8 +27,8 @@ final class Response
      */
     public function __construct($isValid = false, $error = null)
     {
-        $this->isValid = $isValid;
-        $this->error = $error;
+        $this->_isValid = $isValid;
+        $this->_error = $error;
     }
 
     /**
@@ -38,7 +38,7 @@ final class Response
      */
     public function valid()
     {
-        return $this->isValid;
+        return $this->_isValid;
     }
 
     /**
@@ -48,6 +48,6 @@ final class Response
      */
     public function getMessage()
     {
-        return $this->error;
+        return $this->_error;
     }
 }
