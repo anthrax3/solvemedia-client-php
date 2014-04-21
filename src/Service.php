@@ -58,14 +58,14 @@ final class Service
         $server = $useSsl ? self::ADCOPY_API_SECURE_SERVER : self::ADCOPY_API_SERVER;
         $errorpart = $error ? ';error=1' : '';
 
-        return '<script type="text/javascript" src="' . $server . '/papi/challenge.script?k=' . $this->_pubkey . $errorpart . '"></script>
-
+        return <<<EOS
+<script type="text/javascript" src="{$server}/papi/challenge.script?k={$this->_pubkey}{$errorpart}"></script>
 <noscript>
-    <iframe src="' . $server . '/papi/challenge.noscript?k=' . $this->_pubkey . $errorpart
-            . '" height="300" width="500" frameborder="0"></iframe><br/>
+    <iframe src="{$server}/papi/challenge.noscript?k={$this->_pubkey}{$errorpart}" height="300" width="500" frameborder="0"></iframe><br/>
     <textarea name="adcopy_challenge" rows="3" cols="40"></textarea>
     <input type="hidden" name="adcopy_response" value="manual_challenge"/>
-</noscript>';
+</noscript>
+EOS;
     }
 
     /**
