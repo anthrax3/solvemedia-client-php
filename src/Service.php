@@ -9,6 +9,7 @@
  */
 namespace DominionEnterprises\SolveMedia;
 use Guzzle\Http\Client as GuzzleClient;
+use Exception;
 
 final class Service
 {
@@ -30,12 +31,12 @@ final class Service
      * @param string $pubkey A public key for solvemedia
      * @param string $privkey A private key for solvemedia
      * @param string $hashkey An optional hash key for verification
-     * @throws \Exception
+     * @throws Exception
      */
     public function __construct($pubkey, $privkey, $hashkey = '')
     {
         if (empty($pubkey) || empty($privkey)) {
-            throw new \Exception(
+            throw new Exception(
                 "To use solvemedia you must get an API key from <a href='" . self::ADCOPY_SIGNUP . "'>" . self::ADCOPY_SIGNUP . '</a>'
             );
         }
@@ -82,13 +83,13 @@ final class Service
      * @param string $remoteip
      * @param string $challenge
      * @param string $response
-     * @throws \Exception
+     * @throws Exception
      * @return DominionEnterprises\SolveMedia\Response
      */
     public function checkAnswer($remoteip, $challenge, $response)
     {
         if ($remoteip == null || $remoteip == '') {
-            throw new \Exception('For security reasons, you must pass the remote ip to solvemedia');
+            throw new Exception('For security reasons, you must pass the remote ip to solvemedia');
         }
 
         //discard spam submissions
