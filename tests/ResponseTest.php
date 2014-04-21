@@ -27,7 +27,8 @@ class ResponseTest extends \PHPUnit_Framework_TestCase
      * @covers ::valid
      * @covers ::getMessage
      */
-    public function constructWithArguments($isValid, $error) {
+    public function constructWithArguments($isValid, $error)
+    {
         $response = new Response($isValid, $error);
 
         $this->assertSame($isValid, $response->valid());

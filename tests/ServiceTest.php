@@ -62,8 +62,8 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
         $service = new Service($pubkey, 'notest');
 
         $html = $service->getHtml();
-        $this->assertRegExp("/k=$pubkey/", $html);
-        $this->assertNotRegExp("/;error=1/", $html);
+        $this->assertRegExp("/k={$pubkey}/", $html);
+        $this->assertNotRegExp('/;error=1/', $html);
         $this->assertRegExp('/' . preg_quote(Service::ADCOPY_API_SERVER, '/') . '/', $html);
     }
 
@@ -76,7 +76,7 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
     {
         $service = new Service('notest', 'notest');
         $html = $service->getHtml('test', true);
-        $this->assertRegExp("/;error=1/", $html);
+        $this->assertRegExp('/;error=1/', $html);
         $this->assertRegExp('/' . preg_quote(Service::ADCOPY_API_SECURE_SERVER, '/') . '/', $html);
     }
 
