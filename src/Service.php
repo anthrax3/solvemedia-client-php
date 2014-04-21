@@ -105,7 +105,7 @@ EOS;
             // validate message authenticator
             $hash = sha1($answers[0] . $challenge . $this->_hashkey);
 
-            if ($hash != $answers[2]) {
+            if ($hash !== $answers[2]) {
                 return new Response(false, 'hash-fail');
             }
         }
