@@ -1,11 +1,19 @@
 <?php
 namespace DominionEnterprises\SolveMedia;
+use Guzzle\Http\Client as GuzzleClient;
 
 /**
  * @coversDefaultClass \DominionEnterprises\SolveMedia\Service
  */
 class ServiceTest extends \PHPUnit_Framework_TestCase
 {
+    private $_realGuzzleClient;
+
+    public function setUp()
+    {
+        $this->_realGuzzleClient = new GuzzleClient();
+    }
+
     /**
      * @test
      * @expectedException Exception
@@ -24,20 +32,20 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
      */
     public function constructWithInvalidArguments($pubkey, $privkey, $hashkey)
     {
-        new Service($pubkey, $privkey, $hashkey);
+        new Service($this->_realGuzzleClient, $pubkey, $privkey, $hashkey);
     }
 
     public function constructWithInvalidArgumentsData()
     {
         return [
-            [null, null, null],
-            ['', null, null],
-            [0, null, null],
-            [false, null, null],
-            ['test', null, null],
-            ['test', '', null],
-            ['test', 0, null],
-            ['test', false, null],
+            [$this->_realGuzzleClient, null, null, null],
+            [$this->_realGuzzleClient, '', null, null],
+            [$this->_realGuzzleClient, 0, null, null],
+            [$this->_realGuzzleClient, false, null, null],
+            [$this->_realGuzzleClient, 'test', null, null],
+            [$this->_realGuzzleClient, 'test', '', null],
+            [$this->_realGuzzleClient, 'test', 0, null],
+            [$this->_realGuzzleClient, 'test', false, null],
         ];
     }
 
@@ -47,8 +55,8 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
      */
     public function constructWithValidArguments()
     {
-        $this->assertNotNull(new Service('test', 'test'));
-        $this->assertNotNull(new Service('test', 'test', 'test'));
+        $this->assertNotNull(new Service($this->_realGuzzleClient, 'test', 'test'));
+        $this->assertNotNull(new Service($this->_realGuzzleClient, 'test', 'test', 'test'));
     }
 
     /**
@@ -58,8 +66,9 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
      */
     public function getHtmlDefault()
     {
+        $client = new GuzzleClient();
         $pubkey = 'MyTestPubKeyStringToTestFor';
-        $service = new Service($pubkey, 'notest');
+        $service = new Service($this->_realGuzzleClient, $pubkey, 'notest');
 
         $html = $service->getHtml();
         $this->assertRegExp("/k={$pubkey}/", $html);
@@ -74,7 +83,7 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
      */
     public function getHtmlWithArguments()
     {
-        $service = new Service('notest', 'notest');
+        $service = new Service($this->_realGuzzleClient, 'notest', 'notest');
         $html = $service->getHtml('test', true);
         $this->assertRegExp('/;error=1/', $html);
         $this->assertRegExp('/' . preg_quote(Service::ADCOPY_API_SECURE_SERVER, '/') . '/', $html);
@@ -89,7 +98,7 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
      */
     public function checkAnswerNoRemoteIp($remoteIp)
     {
-        $service = new Service('notest', 'notest');
+        $service = new Service($this->_realGuzzleClient, 'notest', 'notest');
         $service->checkAnswer($remoteIp, null, null);
     }
 
@@ -110,7 +119,7 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
      */
     public function checkAnswerEmptyArguments($challenge, $response)
     {
-        $service = new Service('notest', 'notest');
+        $service = new Service($this->_realGuzzleClient, 'notest', 'notest');
         $response = $service->checkAnswer('notest', $challenge, $response);
 
         $this->assertInstanceOf('\DominionEnterprises\SolveMedia\Response', $response);
@@ -139,7 +148,7 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
      */
     public function getSignupUrl()
     {
-        $service = new Service('notest', 'notest');
+        $service = new Service($this->_realGuzzleClient, 'notest', 'notest');
         $this->assertNotEmpty($service->getSignupUrl());
     }
 }

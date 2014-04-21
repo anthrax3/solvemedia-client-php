@@ -8,7 +8,7 @@
  * @author Chris Ryan <christopher.ryan@dominionenterprises.com>
  */
 namespace DominionEnterprises\SolveMedia;
-use Guzzle\Http\Client as GuzzleClient;
+use Guzzle\Http\ClientInterface as GuzzleClient;
 use Exception;
 
 final class Service
@@ -21,6 +21,7 @@ final class Service
     const ADCOPY_VERIFY_SERVER = 'http://verify.solvemedia.com/papi/verify';
     const ADCOPY_SIGNUP = 'http://api.solvemedia.com/public/signup';
 
+    private $_client;
     private $_pubkey;
     private $_privkey;
     private $_hashkey;
@@ -28,17 +29,19 @@ final class Service
     /**
      * Construct a Service object with the required api key values.
      *
+     * @param \Guzzle\Http\Client The guzzle client to send the requests over.
      * @param string $pubkey A public key for solvemedia
      * @param string $privkey A private key for solvemedia
      * @param string $hashkey An optional hash key for verification
      * @throws Exception
      */
-    public function __construct($pubkey, $privkey, $hashkey = '')
+    public function __construct(GuzzleClient $client, $pubkey, $privkey, $hashkey = '')
     {
         if (empty($pubkey) || empty($privkey)) {
             throw new Exception('To use solvemedia you must get an API key from ' . self::ADCOPY_SIGNUP);
         }
 
+        $this->_client = $client;
         $this->_pubkey = $pubkey;
         $this->_privkey = $privkey;
         $this->_hashkey = $hashkey;
@@ -88,8 +91,7 @@ EOS;
             return new Response(false, 'incorrect-solution');
         }
 
-        $client = new GuzzleClient();
-        $httpResponse = $client->post(
+        $httpResponse = $this->_client->post(
             self::ADCOPY_VERIFY_SERVER,
             ['User-Agent' => 'solvemedia/PHP'],
             ['privatekey' => $this->_privkey, 'remoteip' => $remoteip, 'challenge' => $challenge, 'response' => $response]
