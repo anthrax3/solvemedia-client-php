@@ -17,16 +17,6 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException Exception
-     * @covers ::__construct
-     */
-    public function constructNoArguments()
-    {
-        new Service();
-    }
-
-    /**
-     * @test
      * @dataProvider constructWithInvalidArgumentsData
      * @expectedException Exception
      * @covers ::__construct
