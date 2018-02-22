@@ -1,15 +1,15 @@
 <?php
 namespace TraderInteractive\SolveMedia;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * @coversDefaultClass \TraderInteractive\SolveMedia\Response
  */
-class ResponseTest extends \PHPUnit_Framework_TestCase
+class ResponseTest extends TestCase
 {
     /**
      * @test
-     * @uses \TraderInteractive\SolveMedia\Response::valid
-     * @uses \TraderInteractive\SolveMedia\Response::getMessage
      * @covers ::__construct
      */
     public function constructNoArguments()

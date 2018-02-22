@@ -1,12 +1,14 @@
 <?php
 namespace TraderInteractive\SolveMedia;
+
 use Guzzle\Http\Client as GuzzleClient;
 use Guzzle\Http\Message\Response as GuzzleResponse;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @coversDefaultClass \TraderInteractive\SolveMedia\Service
  */
-class ServiceTest extends \PHPUnit_Framework_TestCase
+class ServiceTest extends TestCase
 {
     private $_realGuzzleClient;
 
@@ -52,7 +54,6 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @uses \TraderInteractive\SolveMedia\Service::__construct
      * @covers ::getHtml
      */
     public function getHtmlDefault()
@@ -69,7 +70,6 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @uses \TraderInteractive\SolveMedia\Service::__construct
      * @covers ::getHtml
      */
     public function getHtmlWithArguments()
@@ -82,7 +82,6 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @uses \TraderInteractive\SolveMedia\Service::__construct
      * @dataProvider checkAnswerNoRemoteIpData
      * @expectedException Exception
      * @covers ::checkAnswer
@@ -103,8 +102,6 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @uses \TraderInteractive\SolveMedia\Service::__construct
-     * @uses \TraderInteractive\SolveMedia\Response::<public>
      * @dataProvider checkAnswerEmptyArgumentsData
      * @covers ::checkAnswer
      */
@@ -134,10 +131,6 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @uses \TraderInteractive\SolveMedia\Service::__construct
-     * @uses \TraderInteractive\SolveMedia\Response::__construct
-     * @uses \TraderInteractive\SolveMedia\Response::valid
-     * @uses \TraderInteractive\SolveMedia\Response::getMessage
      * @dataProvider checkAnswerErrorResponseData
      * @covers ::checkAnswer
      */
@@ -168,9 +161,6 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @uses \TraderInteractive\SolveMedia\Service::__construct
-     * @uses \TraderInteractive\SolveMedia\Response::__construct
-     * @uses \TraderInteractive\SolveMedia\Response::valid
      * @dataProvider checkAnswerValidResponseData
      * @covers ::checkAnswer
      */
@@ -197,7 +187,6 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @uses \TraderInteractive\SolveMedia\Service::__construct
      * @covers ::getSignupUrl
      */
     public function getSignupUrl()
