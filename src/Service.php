@@ -1,15 +1,16 @@
 <?php
 /**
- * DominionEnterprises\SolveMedia\Service class for accessing the Solve Media API service.
+ * TraderInteractive\SolveMedia\Service class for accessing the Solve Media API service.
  * This component has been heavily modified from it's original form to
  * encapsulate the functionality in a class based structure that is
  * compatible with class autoloading functionality.
  *
  * @author Chris Ryan <christopher.ryan@dominionenterprises.com>
  */
-namespace DominionEnterprises\SolveMedia;
-use Guzzle\Http\ClientInterface as GuzzleClient;
+namespace TraderInteractive\SolveMedia;
+
 use Exception;
+use GuzzleHttp\ClientInterface;
 
 final class Service
 {
@@ -21,21 +22,36 @@ final class Service
     const ADCOPY_VERIFY_SERVER = 'http://verify.solvemedia.com/papi/verify';
     const ADCOPY_SIGNUP = 'http://api.solvemedia.com/public/signup';
 
+    /**
+     * @var ClientInterface
+     */
     private $_client;
+
+    /**
+     * @var string
+     */
     private $_pubkey;
+
+    /**
+     * @var string
+     */
     private $_privkey;
+
+    /**
+     * @var string
+     */
     private $_hashkey;
 
     /**
      * Construct a Service object with the required api key values.
      *
-     * @param \Guzzle\Http\Client The guzzle client to send the requests over.
+     * @param ClientInterface $client The guzzle client to send the requests over.
      * @param string $pubkey A public key for solvemedia
      * @param string $privkey A private key for solvemedia
      * @param string $hashkey An optional hash key for verification
      * @throws Exception
      */
-    public function __construct(GuzzleClient $client, $pubkey, $privkey, $hashkey = '')
+    public function __construct(ClientInterface $client, string $pubkey, string $privkey, string $hashkey = '')
     {
         if (empty($pubkey) || empty($privkey)) {
             throw new Exception('To use solvemedia you must get an API key from ' . self::ADCOPY_SIGNUP);
@@ -56,7 +72,7 @@ final class Service
      * @param boolean $useSsl Should the request be made over ssl? (optional, default is false)
      * @return string The HTML to be embedded in the user's form.
      */
-    public function getHtml($error = null, $useSsl = false)
+    public function getHtml(string $error = null, bool $useSsl = false) : string
     {
         $server = $useSsl ? self::ADCOPY_API_SECURE_SERVER : self::ADCOPY_API_SERVER;
         $errorpart = $error ? ';error=1' : '';
@@ -78,9 +94,9 @@ EOS;
      * @param string $challenge
      * @param string $response
      * @throws Exception
-     * @return DominionEnterprises\SolveMedia\Response
+     * @return Response
      */
-    public function checkAnswer($remoteip, $challenge, $response)
+    public function checkAnswer(string $remoteip, string $challenge = null, string $response = null) : Response
     {
         if (empty($remoteip)) {
             throw new Exception('For security reasons, you must pass the remote ip to solvemedia');
@@ -91,17 +107,25 @@ EOS;
             return new Response(false, 'incorrect-solution');
         }
 
-        $httpResponse = $this->_client->post(
+        $httpResponse = $this->_client->request(
+            'POST',
             self::ADCOPY_VERIFY_SERVER,
-            ['User-Agent' => 'solvemedia/PHP'],
-            ['privatekey' => $this->_privkey, 'remoteip' => $remoteip, 'challenge' => $challenge, 'response' => $response]
-        )->send();
+            [
+                'headers' => ['User-Agent' => 'solvemedia/PHP'],
+                'form_params' => [
+                    'privatekey' => $this->_privkey,
+                    'remoteip' => $remoteip,
+                    'challenge' => $challenge,
+                    'response' => $response,
+                ],
+            ]
+        );
 
         if ($httpResponse->getStatusCode() !== 200) {
             return new Response(false, $httpResponse->getReasonPhrase());
         }
 
-        $answers = explode("\n", $httpResponse->getBody());
+        $answers = explode("\n", (string)$httpResponse->getBody());
 
         if (!empty($this->_hashkey)) {
             // validate message authenticator
@@ -128,7 +152,7 @@ EOS;
      * @param string $appname The name of your application
      * @return string url for signup page
      */
-    public function getSignupUrl($domain = null, $appname = null)
+    public function getSignupUrl(string $domain = null, string $appname = null) : string
     {
         return self::ADCOPY_SIGNUP . '?' . http_build_query(['domain' => $domain, 'app' => $appname]);
     }
