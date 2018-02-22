@@ -1,10 +1,10 @@
 <?php
-namespace DominionEnterprises\SolveMedia;
+namespace TraderInteractive\SolveMedia;
 use Guzzle\Http\Client as GuzzleClient;
 use Guzzle\Http\Message\Response as GuzzleResponse;
 
 /**
- * @coversDefaultClass \DominionEnterprises\SolveMedia\Service
+ * @coversDefaultClass \TraderInteractive\SolveMedia\Service
  */
 class ServiceTest extends \PHPUnit_Framework_TestCase
 {
@@ -52,7 +52,7 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @uses \DominionEnterprises\SolveMedia\Service::__construct
+     * @uses \TraderInteractive\SolveMedia\Service::__construct
      * @covers ::getHtml
      */
     public function getHtmlDefault()
@@ -69,7 +69,7 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @uses \DominionEnterprises\SolveMedia\Service::__construct
+     * @uses \TraderInteractive\SolveMedia\Service::__construct
      * @covers ::getHtml
      */
     public function getHtmlWithArguments()
@@ -82,7 +82,7 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @uses \DominionEnterprises\SolveMedia\Service::__construct
+     * @uses \TraderInteractive\SolveMedia\Service::__construct
      * @dataProvider checkAnswerNoRemoteIpData
      * @expectedException Exception
      * @covers ::checkAnswer
@@ -103,8 +103,8 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @uses \DominionEnterprises\SolveMedia\Service::__construct
-     * @uses \DominionEnterprises\SolveMedia\Response::<public>
+     * @uses \TraderInteractive\SolveMedia\Service::__construct
+     * @uses \TraderInteractive\SolveMedia\Response::<public>
      * @dataProvider checkAnswerEmptyArgumentsData
      * @covers ::checkAnswer
      */
@@ -113,7 +113,7 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
         $service = new Service($this->_realGuzzleClient, 'notest', 'notest');
         $response = $service->checkAnswer('notest', $challenge, $response);
 
-        $this->assertInstanceOf('\DominionEnterprises\SolveMedia\Response', $response);
+        $this->assertInstanceOf('\TraderInteractive\SolveMedia\Response', $response);
         $this->assertFalse($response->valid());
         $this->assertSame('incorrect-solution', $response->getMessage());
     }
@@ -134,10 +134,10 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @uses \DominionEnterprises\SolveMedia\Service::__construct
-     * @uses \DominionEnterprises\SolveMedia\Response::__construct
-     * @uses \DominionEnterprises\SolveMedia\Response::valid
-     * @uses \DominionEnterprises\SolveMedia\Response::getMessage
+     * @uses \TraderInteractive\SolveMedia\Service::__construct
+     * @uses \TraderInteractive\SolveMedia\Response::__construct
+     * @uses \TraderInteractive\SolveMedia\Response::valid
+     * @uses \TraderInteractive\SolveMedia\Response::getMessage
      * @dataProvider checkAnswerErrorResponseData
      * @covers ::checkAnswer
      */
@@ -168,9 +168,9 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @uses \DominionEnterprises\SolveMedia\Service::__construct
-     * @uses \DominionEnterprises\SolveMedia\Response::__construct
-     * @uses \DominionEnterprises\SolveMedia\Response::valid
+     * @uses \TraderInteractive\SolveMedia\Service::__construct
+     * @uses \TraderInteractive\SolveMedia\Response::__construct
+     * @uses \TraderInteractive\SolveMedia\Response::valid
      * @dataProvider checkAnswerValidResponseData
      * @covers ::checkAnswer
      */
@@ -197,7 +197,7 @@ class ServiceTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @uses \DominionEnterprises\SolveMedia\Service::__construct
+     * @uses \TraderInteractive\SolveMedia\Service::__construct
      * @covers ::getSignupUrl
      */
     public function getSignupUrl()

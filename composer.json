@@ -20,6 +20,6 @@
         "squizlabs/php_codesniffer": "~1.5"
     },
     "autoload": {
-        "psr-4": { "DominionEnterprises\\SolveMedia\\": "src/" }
+        "psr-4": { "TraderInteractive\\SolveMedia\\": "src/" }
     }
 }

@@ -1,7 +1,7 @@
 <?php
 /**
- * DominionEnterprises\SolveMedia\Response class used with
- * the DominionEnterprises\SolveMedia\Service class.
+ * TraderInteractive\SolveMedia\Response class used with
+ * the TraderInteractive\SolveMedia\Service class.
  * This component has been modified from it's original form to
  * encapsulate the functionality in a class based structure that is
  * compatible with class autoloading functionality.
@@ -9,10 +9,10 @@
  * @author Chris Ryan <christopher.ryan@dominionenterprises.com>
  */
 
-namespace DominionEnterprises\SolveMedia;
+namespace TraderInteractive\SolveMedia;
 
 /**
- * A DominionEnterprises\SolveMedia\Response is returned from DominionEnterprises\SolveMedia\Service::checkAnswer()
+ * A TraderInteractive\SolveMedia\Response is returned from TraderInteractive\SolveMedia\Service::checkAnswer()
  */
 final class Response
 {

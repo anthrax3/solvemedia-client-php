@@ -1,15 +1,15 @@
 <?php
-namespace DominionEnterprises\SolveMedia;
+namespace TraderInteractive\SolveMedia;
 
 /**
- * @coversDefaultClass \DominionEnterprises\SolveMedia\Response
+ * @coversDefaultClass \TraderInteractive\SolveMedia\Response
  */
 class ResponseTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test
-     * @uses \DominionEnterprises\SolveMedia\Response::valid
-     * @uses \DominionEnterprises\SolveMedia\Response::getMessage
+     * @uses \TraderInteractive\SolveMedia\Response::valid
+     * @uses \TraderInteractive\SolveMedia\Response::getMessage
      * @covers ::__construct
      */
     public function constructNoArguments()

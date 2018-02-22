@@ -1,13 +1,13 @@
 <?php
 /**
- * DominionEnterprises\SolveMedia\Service class for accessing the Solve Media API service.
+ * TraderInteractive\SolveMedia\Service class for accessing the Solve Media API service.
  * This component has been heavily modified from it's original form to
  * encapsulate the functionality in a class based structure that is
  * compatible with class autoloading functionality.
  *
  * @author Chris Ryan <christopher.ryan@dominionenterprises.com>
  */
-namespace DominionEnterprises\SolveMedia;
+namespace TraderInteractive\SolveMedia;
 use Guzzle\Http\ClientInterface as GuzzleClient;
 use Exception;
 
@@ -78,7 +78,7 @@ EOS;
      * @param string $challenge
      * @param string $response
      * @throws Exception
-     * @return DominionEnterprises\SolveMedia\Response
+     * @return TraderInteractive\SolveMedia\Response
      */
     public function checkAnswer($remoteip, $challenge, $response)
     {
