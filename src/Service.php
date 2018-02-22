@@ -8,6 +8,7 @@
  * @author Chris Ryan <christopher.ryan@dominionenterprises.com>
  */
 namespace TraderInteractive\SolveMedia;
+
 use Guzzle\Http\ClientInterface as GuzzleClient;
 use Exception;
 
