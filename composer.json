@@ -1,5 +1,5 @@
 {
-    "name": "dominionenterprises/solvemedia-client",
+    "name": "traderinteractive/solvemedia-client",
     "description": "A library for accessing the Solve Media Api.",
     "keywords": ["solvemedia", "captcha", "re-captcha"],
     "authors": [
