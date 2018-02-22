@@ -27,14 +27,8 @@ class ServiceTest extends TestCase
     public function constructWithInvalidArgumentsData()
     {
         return [
-            [null, null, null],
-            ['', null, null],
-            [0, null, null],
-            [false, null, null],
-            ['test', null, null],
-            ['test', '', null],
-            ['test', 0, null],
-            ['test', false, null],
+            'empty pubKey' => ['', 'privKey', ''],
+            'empty privKey' => ['pubKey', '', ''],
         ];
     }
 
@@ -80,7 +74,6 @@ class ServiceTest extends TestCase
     public function checkAnswerNoRemoteIpData()
     {
         return [
-            [null],
             [''],
         ];
     }

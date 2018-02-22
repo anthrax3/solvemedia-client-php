@@ -22,9 +22,24 @@ final class Service
     const ADCOPY_VERIFY_SERVER = 'http://verify.solvemedia.com/papi/verify';
     const ADCOPY_SIGNUP = 'http://api.solvemedia.com/public/signup';
 
+    /**
+     * @var ClientInterface
+     */
     private $_client;
+
+    /**
+     * @var string
+     */
     private $_pubkey;
+
+    /**
+     * @var string
+     */
     private $_privkey;
+
+    /**
+     * @var string
+     */
     private $_hashkey;
 
     /**
@@ -36,7 +51,7 @@ final class Service
      * @param string $hashkey An optional hash key for verification
      * @throws Exception
      */
-    public function __construct(ClientInterface $client, $pubkey, $privkey, $hashkey = '')
+    public function __construct(ClientInterface $client, string $pubkey, string $privkey, string $hashkey = '')
     {
         if (empty($pubkey) || empty($privkey)) {
             throw new Exception('To use solvemedia you must get an API key from ' . self::ADCOPY_SIGNUP);
@@ -57,7 +72,7 @@ final class Service
      * @param boolean $useSsl Should the request be made over ssl? (optional, default is false)
      * @return string The HTML to be embedded in the user's form.
      */
-    public function getHtml($error = null, $useSsl = false)
+    public function getHtml(string $error = null, bool $useSsl = false) : string
     {
         $server = $useSsl ? self::ADCOPY_API_SECURE_SERVER : self::ADCOPY_API_SERVER;
         $errorpart = $error ? ';error=1' : '';
@@ -79,9 +94,9 @@ EOS;
      * @param string $challenge
      * @param string $response
      * @throws Exception
-     * @return TraderInteractive\SolveMedia\Response
+     * @return Response
      */
-    public function checkAnswer($remoteip, $challenge, $response)
+    public function checkAnswer(string $remoteip, string $challenge = null, string $response = null) : Response
     {
         if (empty($remoteip)) {
             throw new Exception('For security reasons, you must pass the remote ip to solvemedia');
@@ -137,7 +152,7 @@ EOS;
      * @param string $appname The name of your application
      * @return string url for signup page
      */
-    public function getSignupUrl($domain = null, $appname = null)
+    public function getSignupUrl(string $domain = null, string $appname = null) : string
     {
         return self::ADCOPY_SIGNUP . '?' . http_build_query(['domain' => $domain, 'app' => $appname]);
     }
