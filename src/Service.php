@@ -9,8 +9,8 @@
  */
 namespace TraderInteractive\SolveMedia;
 
-use Guzzle\Http\ClientInterface as GuzzleClient;
 use Exception;
+use GuzzleHttp\ClientInterface;
 
 final class Service
 {
@@ -30,13 +30,13 @@ final class Service
     /**
      * Construct a Service object with the required api key values.
      *
-     * @param \Guzzle\Http\Client The guzzle client to send the requests over.
+     * @param ClientInterface $client The guzzle client to send the requests over.
      * @param string $pubkey A public key for solvemedia
      * @param string $privkey A private key for solvemedia
      * @param string $hashkey An optional hash key for verification
      * @throws Exception
      */
-    public function __construct(GuzzleClient $client, $pubkey, $privkey, $hashkey = '')
+    public function __construct(ClientInterface $client, $pubkey, $privkey, $hashkey = '')
     {
         if (empty($pubkey) || empty($privkey)) {
             throw new Exception('To use solvemedia you must get an API key from ' . self::ADCOPY_SIGNUP);
@@ -92,17 +92,25 @@ EOS;
             return new Response(false, 'incorrect-solution');
         }
 
-        $httpResponse = $this->_client->post(
+        $httpResponse = $this->_client->request(
+            'POST',
             self::ADCOPY_VERIFY_SERVER,
-            ['User-Agent' => 'solvemedia/PHP'],
-            ['privatekey' => $this->_privkey, 'remoteip' => $remoteip, 'challenge' => $challenge, 'response' => $response]
-        )->send();
+            [
+                'headers' => ['User-Agent' => 'solvemedia/PHP'],
+                'form_params' => [
+                    'privatekey' => $this->_privkey,
+                    'remoteip' => $remoteip,
+                    'challenge' => $challenge,
+                    'response' => $response,
+                ],
+            ]
+        );
 
         if ($httpResponse->getStatusCode() !== 200) {
             return new Response(false, $httpResponse->getReasonPhrase());
         }
 
-        $answers = explode("\n", $httpResponse->getBody());
+        $answers = explode("\n", (string)$httpResponse->getBody());
 
         if (!empty($this->_hashkey)) {
             // validate message authenticator

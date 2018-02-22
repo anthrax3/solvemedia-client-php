@@ -1,21 +1,17 @@
 <?php
 namespace TraderInteractive\SolveMedia;
 
-use Guzzle\Http\Client as GuzzleClient;
-use Guzzle\Http\Message\Response as GuzzleResponse;
+use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 
 /**
  * @coversDefaultClass \TraderInteractive\SolveMedia\Service
+ * @covers ::__construct
  */
 class ServiceTest extends TestCase
 {
     private $_realGuzzleClient;
-
-    public function setUp()
-    {
-        $this->_realGuzzleClient = new GuzzleClient();
-    }
 
     /**
      * @test
@@ -25,31 +21,21 @@ class ServiceTest extends TestCase
      */
     public function constructWithInvalidArguments($pubkey, $privkey, $hashkey)
     {
-        new Service($this->_realGuzzleClient, $pubkey, $privkey, $hashkey);
+        new Service($this->getGuzzleClient(), $pubkey, $privkey, $hashkey);
     }
 
     public function constructWithInvalidArgumentsData()
     {
         return [
-            [$this->_realGuzzleClient, null, null, null],
-            [$this->_realGuzzleClient, '', null, null],
-            [$this->_realGuzzleClient, 0, null, null],
-            [$this->_realGuzzleClient, false, null, null],
-            [$this->_realGuzzleClient, 'test', null, null],
-            [$this->_realGuzzleClient, 'test', '', null],
-            [$this->_realGuzzleClient, 'test', 0, null],
-            [$this->_realGuzzleClient, 'test', false, null],
+            [null, null, null],
+            ['', null, null],
+            [0, null, null],
+            [false, null, null],
+            ['test', null, null],
+            ['test', '', null],
+            ['test', 0, null],
+            ['test', false, null],
         ];
-    }
-
-    /**
-     * @test
-     * @covers ::__construct
-     */
-    public function constructWithValidArguments()
-    {
-        $this->assertNotNull(new Service($this->_realGuzzleClient, 'test', 'test'));
-        $this->assertNotNull(new Service($this->_realGuzzleClient, 'test', 'test', 'test'));
     }
 
     /**
@@ -58,9 +44,8 @@ class ServiceTest extends TestCase
      */
     public function getHtmlDefault()
     {
-        $client = new GuzzleClient();
         $pubkey = 'MyTestPubKeyStringToTestFor';
-        $service = new Service($this->_realGuzzleClient, $pubkey, 'notest');
+        $service = new Service($this->getGuzzleClient(), $pubkey, 'notest');
 
         $html = $service->getHtml();
         $this->assertRegExp("/k={$pubkey}/", $html);
@@ -74,7 +59,7 @@ class ServiceTest extends TestCase
      */
     public function getHtmlWithArguments()
     {
-        $service = new Service($this->_realGuzzleClient, 'notest', 'notest');
+        $service = new Service($this->getGuzzleClient(), 'notest', 'notest');
         $html = $service->getHtml('test', true);
         $this->assertRegExp('/;error=1/', $html);
         $this->assertRegExp('/' . preg_quote(Service::ADCOPY_API_SECURE_SERVER, '/') . '/', $html);
@@ -88,7 +73,7 @@ class ServiceTest extends TestCase
      */
     public function checkAnswerNoRemoteIp($remoteIp)
     {
-        $service = new Service($this->_realGuzzleClient, 'notest', 'notest');
+        $service = new Service($this->getGuzzleClient(), 'notest', 'notest');
         $service->checkAnswer($remoteIp, null, null);
     }
 
@@ -107,7 +92,7 @@ class ServiceTest extends TestCase
      */
     public function checkAnswerEmptyArguments($challenge, $response)
     {
-        $service = new Service($this->_realGuzzleClient, 'notest', 'notest');
+        $service = new Service($this->getGuzzleClient(), 'notest', 'notest');
         $response = $service->checkAnswer('notest', $challenge, $response);
 
         $this->assertInstanceOf('\TraderInteractive\SolveMedia\Response', $response);
@@ -134,15 +119,9 @@ class ServiceTest extends TestCase
      * @dataProvider checkAnswerErrorResponseData
      * @covers ::checkAnswer
      */
-    public function checkAnswerErrorResponse($hashKey, GuzzleResponse $guzzleResponse, $message)
+    public function checkAnswerErrorResponse($hashKey, Response $guzzleResponse, $message)
     {
-        $guzzleRequest = $this->getMockForAbstractClass('\Guzzle\Http\Message\RequestInterface');
-        $guzzleRequest->expects($this->once())->method('send')->will($this->returnValue($guzzleResponse));
-
-        $guzzleClient = $this->getMockForAbstractClass('\Guzzle\Http\ClientInterface');
-        $guzzleClient->expects($this->once())->method('post')->will($this->returnValue($guzzleRequest));
-
-        $service = new Service($guzzleClient, 'notest', 'notest', $hashKey);
+        $service = new Service($this->getGuzzleClient($guzzleResponse), 'notest', 'notest', $hashKey);
         $response = $service->checkAnswer('notest', 'foo', 'bar');
         $this->assertFalse($response->valid());
         $this->assertSame($message, $response->getMessage());
@@ -151,11 +130,11 @@ class ServiceTest extends TestCase
     public function checkAnswerErrorResponseData()
     {
         return [
-            ['', new GuzzleResponse(400), 'Bad Request'],
-            ['', new GuzzleResponse(200, [], "false\nfailure-message"), 'failure-message'],
-            ['hashKey', new GuzzleResponse(200, [], "true\nfailure-message\nnot-the-right-hash"), 'hash-fail'],
-            ['hashKey', new GuzzleResponse(200, [], "false\nfailure-message\nnot-the-right-hash"), 'hash-fail'],
-            ['hashKey', new GuzzleResponse(200, [], "false\nfailure-message\n" . sha1('falsefoohashKey')), 'failure-message'],
+            ['', new Response(400), 'Bad Request'],
+            ['', new Response(200, [], "false\nfailure-message"), 'failure-message'],
+            ['hashKey', new Response(200, [], "true\nfailure-message\nnot-the-right-hash"), 'hash-fail'],
+            ['hashKey', new Response(200, [], "false\nfailure-message\nnot-the-right-hash"), 'hash-fail'],
+            ['hashKey', new Response(200, [], "false\nfailure-message\n" . sha1('falsefoohashKey')), 'failure-message'],
         ];
     }
 
@@ -164,15 +143,9 @@ class ServiceTest extends TestCase
      * @dataProvider checkAnswerValidResponseData
      * @covers ::checkAnswer
      */
-    public function checkAnswerValidResponse($hashKey, GuzzleResponse $guzzleResponse)
+    public function checkAnswerValidResponse($hashKey, Response $guzzleResponse)
     {
-        $guzzleRequest = $this->getMockForAbstractClass('\Guzzle\Http\Message\RequestInterface');
-        $guzzleRequest->expects($this->once())->method('send')->will($this->returnValue($guzzleResponse));
-
-        $guzzleClient = $this->getMockForAbstractClass('\Guzzle\Http\ClientInterface');
-        $guzzleClient->expects($this->once())->method('post')->will($this->returnValue($guzzleRequest));
-
-        $service = new Service($guzzleClient, 'notest', 'notest', $hashKey);
+        $service = new Service($this->getGuzzleClient($guzzleResponse), 'notest', 'notest', $hashKey);
         $response = $service->checkAnswer('notest', 'foo', 'bar');
         $this->assertTrue($response->valid());
     }
@@ -180,8 +153,8 @@ class ServiceTest extends TestCase
     public function checkAnswerValidResponseData()
     {
         return [
-            ['', new GuzzleResponse(200, [], 'true')],
-            ['hashKey', new GuzzleResponse(200, [], "true\n\n" . sha1('truefoohashKey'))],
+            ['', new Response(200, [], 'true')],
+            ['hashKey', new Response(200, [], "true\n\n" . sha1('truefoohashKey'))],
         ];
     }
 
@@ -191,7 +164,14 @@ class ServiceTest extends TestCase
      */
     public function getSignupUrl()
     {
-        $service = new Service($this->_realGuzzleClient, 'notest', 'notest');
+        $service = new Service($this->getGuzzleClient(), 'notest', 'notest');
         $this->assertNotEmpty($service->getSignupUrl());
+    }
+
+    private function getGuzzleClient(Response $response = null) : ClientInterface
+    {
+        $mock = $this->getMockBuilder(ClientInterface::class)->getMock();
+        $mock->method('request')->willReturn($response);
+        return $mock;
     }
 }

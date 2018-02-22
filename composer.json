@@ -15,7 +15,7 @@
     },
     "require": {
         "php": "^7.0",
-        "guzzle/http": "~3.7"
+        "guzzlehttp/guzzle": "^6.3"
     },
     "require-dev": {
         "php-coveralls/php-coveralls": "^1.0",
